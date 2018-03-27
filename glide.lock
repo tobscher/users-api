@@ -1,0 +1,12 @@
+hash: 2c89efeb27dc1a5fa7bf0666a3258f497d6a3d6b58fdb18c35e1839bee13cc17
+updated: 2018-03-27T19:22:32.268761+01:00
+imports:
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 53c1911da2b537f792e7cafcb446b05ffe33b996
+- name: github.com/stretchr/testify
+  version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
+  subpackages:
+  - assert
+testImports: []
