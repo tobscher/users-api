@@ -40,7 +40,7 @@ func TestUsersIndexOnErrorReturnsInternalServerError(t *testing.T) {
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
-	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode, "expected response status code to be 501")
+	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode, "expected response status code to be 500")
 	assert.Equal(t, "{\"message\":\"An unexpected error occurred\"}\n", string(body), "expected body to include error")
 }
 
@@ -100,7 +100,7 @@ func TestUsersShowOnErrorReturnsInternalServerError(t *testing.T) {
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
-	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode, "expected response status code to be 501")
+	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode, "expected response status code to be 500")
 	assert.Equal(t, "{\"message\":\"error\"}\n", string(body), "expected body to return error")
 }
 
