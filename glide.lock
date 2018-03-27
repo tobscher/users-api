@@ -1,6 +1,8 @@
-hash: ed13ec8f828e0ee04d2516728e544bf4ad5489de8e12f751e560a1e8899aca05
-updated: 2018-03-27T19:40:52.666799+01:00
+hash: 76b0ef1ca310cc53ec7d135984384ed5dc9a356e74fe19d090ea3cdc78e5dfa2
+updated: 2018-03-27T22:04:25.626689+01:00
 imports:
+- name: github.com/dgrijalva/jwt-go
+  version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
 - name: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 - name: github.com/gorilla/mux

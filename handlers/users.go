@@ -20,7 +20,7 @@ func (h *users) index() http.Handler {
 		users, err := h.service.All()
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(getErrorResponse(err))
+			json.NewEncoder(w).Encode(core.NewErrorResponse(err))
 			return
 		}
 
@@ -34,26 +34,20 @@ func (h *users) show() http.Handler {
 		id, err := getID(r)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(getErrorResponse(err))
+			json.NewEncoder(w).Encode(core.NewErrorResponse(err))
 			return
 		}
 
 		user, err := h.service.Show(id)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(getErrorResponse(err))
+			json.NewEncoder(w).Encode(core.NewErrorResponse(err))
 			return
 		}
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(user)
 	})
-}
-
-func getErrorResponse(err error) *core.ErrorResponse {
-	return &core.ErrorResponse{
-		Message: err.Error(),
-	}
 }
 
 func getID(r *http.Request) (uuid.UUID, error) {

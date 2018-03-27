@@ -4,3 +4,10 @@ package core
 type ErrorResponse struct {
 	Message string `json:"message"`
 }
+
+// NewErrorResponse returns a new error response from an error.
+func NewErrorResponse(err error) *ErrorResponse {
+	return &ErrorResponse{
+		Message: err.Error(),
+	}
+}
