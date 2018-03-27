@@ -2,16 +2,30 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/satori/go.uuid"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tobscher/users-api/core"
 )
+
+func createJwtToken(access []string, key string) string {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"access": access,
+	})
+	tokenString, err := token.SignedString([]byte(key))
+	if err != nil {
+		log.Fatal(err)
+	}
+	return tokenString
+}
 
 type stubUsersService struct {
 	users []*core.User
@@ -74,12 +88,16 @@ func TestUsersIndex(t *testing.T) {
 
 func TestUsersShowInvalidID(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com/users/z", nil)
+	validToken := createJwtToken([]string{"user"}, "valid")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", validToken))
 	w := httptest.NewRecorder()
 
 	handler := &users{
 		service: &stubUsersService{},
 	}
-	NewRouter(handler).ServeHTTP(w, req)
+
+	key := []byte("valid")
+	NewRouter(handler, key).ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -89,6 +107,8 @@ func TestUsersShowInvalidID(t *testing.T) {
 
 func TestUsersShowOnErrorReturnsInternalServerError(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com/users/2723b889-f546-4030-bebd-6a880889f82e", nil)
+	validToken := createJwtToken([]string{"user"}, "valid")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", validToken))
 	w := httptest.NewRecorder()
 
 	handler := &users{
@@ -96,7 +116,9 @@ func TestUsersShowOnErrorReturnsInternalServerError(t *testing.T) {
 			err: errors.New("error"),
 		},
 	}
-	NewRouter(handler).ServeHTTP(w, req)
+
+	key := []byte("valid")
+	NewRouter(handler, key).ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -107,6 +129,8 @@ func TestUsersShowOnErrorReturnsInternalServerError(t *testing.T) {
 
 func TestUsersShow(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com/users/2723b889-f546-4030-bebd-6a880889f82e", nil)
+	validToken := createJwtToken([]string{"user"}, "valid")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", validToken))
 	w := httptest.NewRecorder()
 
 	id, _ := uuid.FromString("2723b889-f546-4030-bebd-6a880889f82e")
@@ -118,7 +142,9 @@ func TestUsersShow(t *testing.T) {
 			},
 		},
 	}
-	NewRouter(handler).ServeHTTP(w, req)
+
+	key := []byte("valid")
+	NewRouter(handler, key).ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
