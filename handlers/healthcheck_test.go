@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"net/http"
@@ -11,7 +11,7 @@ import (
 func TestHealthcheck(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://example.com/foo", nil)
 	w := httptest.NewRecorder()
-	healthcheckHandler(w, req)
+	HealthcheckHandler(w, req)
 
 	resp := w.Result()
 	assert.Equal(t, resp.StatusCode, http.StatusOK, "expected response status code to be 200")
