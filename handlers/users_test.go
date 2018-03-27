@@ -36,7 +36,7 @@ func TestUsersIndexOnErrorReturnsInternalServerError(t *testing.T) {
 			err: errors.New("An unexpected error occurred"),
 		},
 	}
-	handler.index(w, req)
+	handler.index().ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -64,7 +64,7 @@ func TestUsersIndex(t *testing.T) {
 			},
 		},
 	}
-	handler.index(w, req)
+	handler.index().ServeHTTP(w, req)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -102,6 +102,7 @@ func TestUsersShowOnErrorReturnsInternalServerError(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	assert.Equal(t, http.StatusInternalServerError, resp.StatusCode, "expected response status code to be 500")
 	assert.Equal(t, "{\"message\":\"error\"}\n", string(body), "expected body to return error")
+	assert.Equal(t, "application/json; charset=UTF-8", resp.Header.Get("Content-Type"), "expected content type to be json")
 }
 
 func TestUsersShow(t *testing.T) {
@@ -123,4 +124,5 @@ func TestUsersShow(t *testing.T) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	assert.Equal(t, http.StatusOK, resp.StatusCode, "expected response status code to be 200")
 	assert.Equal(t, "{\"id\":\"2723b889-f546-4030-bebd-6a880889f82e\",\"name\":\"Test\"}\n", string(body), "expected body to return error")
+	assert.Equal(t, "application/json; charset=UTF-8", resp.Header.Get("Content-Type"), "expected content type to be json")
 }

@@ -15,39 +15,39 @@ type users struct {
 	service core.UsersService
 }
 
-func (h *users) index(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+func (h *users) index() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		users, err := h.service.All()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(getErrorResponse(err))
+			return
+		}
 
-	users, err := h.service.All()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(getErrorResponse(err))
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(users)
+	})
 }
 
-func (h *users) show(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+func (h *users) show() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		id, err := getID(r)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(getErrorResponse(err))
+			return
+		}
 
-	id, err := getID(r)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(getErrorResponse(err))
-		return
-	}
+		user, err := h.service.Show(id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(getErrorResponse(err))
+			return
+		}
 
-	user, err := h.service.Show(id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(getErrorResponse(err))
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(user)
+	})
 }
 
 func getErrorResponse(err error) *core.ErrorResponse {
